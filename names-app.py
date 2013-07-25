@@ -1,5 +1,7 @@
 #!/usr/bin/python
 
+top = 8
+
 import random
 import math
 
@@ -46,10 +48,11 @@ def merge(left, right):
     points = len(left) - i
     points += len(right) - j - 1
     print "Bonus progress: " + str(points)
-    progress_points += points
+#    progress_points += points
 
     result += left[i:]
     result += right[j:]
+    
     return result
 
 def mergesort(lst):
@@ -58,8 +61,10 @@ def mergesort(lst):
     middle = int(len(lst) / 2)
     left = mergesort(lst[:middle])
     right = mergesort(lst[middle:])
-    return merge(left, right)
-
+    result = merge(left, right)
+    if len(result) > top:
+        result = result[-top:]
+    return result
 
 if __name__ == "__main__":
 
@@ -67,4 +72,5 @@ if __name__ == "__main__":
     ranking = mergesort(names)
     print "Progress: " + str(progress_points) + "/" + str(progress_max)    
     print "Ranking (Worst to Best):"
+    print len(ranking)
     print ranking
