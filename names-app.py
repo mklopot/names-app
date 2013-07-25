@@ -71,6 +71,6 @@ if __name__ == "__main__":
     names = loadfile()
     ranking = mergesort(names)
     print "Progress: " + str(progress_points) + "/" + str(progress_max)    
-    print "Ranking (Worst to Best):"
+    print "Top " + str(len(ranking)) + " (Worst to Best):"
     print len(ranking)
     print ranking
