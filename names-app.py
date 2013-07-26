@@ -6,7 +6,6 @@ import math
 import shelve
 
 global progress_max
-global progress_points
 global top
 global replay_sequence
 replay_sequence = []
@@ -39,17 +38,20 @@ def createprofile(profile="default", filename="names.txt"):
     names = f.readlines()
     random.shuffle(names)
 
-    length = len(names)
-    k = math.floor(math.log(length,2)) + 1
-    progress_max = 1 + k * length - 2 ** k
-    progress_points = 0
 
-    profile["progress_points"] = progress_points
-    profile["progress_max"] = progress_max
+    profile["progress_points"] = 0
+    progress_points = profile["progress_points"]
+    
     profile["initdataset"] = names
     profile["saved_sequence"] = []
     print "Initializing replay sequence"
     profile["top"] = top
+
+    length = len(names)
+    k = math.floor(math.log(length,2)) + 1
+    profile["progress_max"] = 1 + k * length - 2 ** k
+    print profile["progress_max"]
+    progress_max = profile["progress_max"] 
     profile.sync()
     
     return names
@@ -64,7 +66,7 @@ def replay():
 
 def ask_user(a, b, profile=None):
     global progress_points
-    print "Progress: " + str(progress_points) + " of at most " + str(progress_max)
+    print "Progress: " + str(profile["progress_points"]) + " of at most " + str(progress_max)
     print "Which of these names do you like better?\nPress (1) or (2)\n1. " + a + "\n2. " + b
     i=0
     while not (i == "1") and not (i == "2"):
@@ -76,8 +78,8 @@ def ask_user(a, b, profile=None):
                 print "Saving your choice in the database"
                 profile["saved_sequence"].append(i)
                 print "Database replay sequence is now", profile["saved_sequence"]
+                profile["progress_points"] += 1
                 profile.sync()
-                progress_points += 1
     return int(i) - 1
 
 
