@@ -12,7 +12,7 @@ global top
 top = 8
 
 def loadprofile(profile="default"):
-    profile = shelve.open(profile) 
+    profile = shelve.open(profile, writeback=True) 
     if "initsequence" in profile:
         print "Loading saved profile..."
         global saved_responses
@@ -23,10 +23,10 @@ def loadprofile(profile="default"):
         progress_max = profile["progress_max"]
         progress_points = profile["progress_points"]
         top = profile["top"]
-        return profile["initsequence"]
+        return profile["initsequence"], profile
     else:
         print "Saved profile not found, initializing..."
-        return createprofile(profile) 
+        return createprofile(profile), profile 
    
 
 def createprofile(profile="default", filename="names.txt"):
@@ -47,26 +47,31 @@ def createprofile(profile="default", filename="names.txt"):
     profile["saved_responses"] = []
     profile["top"] = top
     profile.sync()
-
-
     
     return names
 
-def ask_user(a, b):
+def ask_user(a, b, profile=None):
     global progress_points
     print "Progress: " + str(progress_points) + " of at most " + str(progress_max)
+    print a
+    print b
     print "Which of these names do you like better?\nPress (1) or (2)\n1. " + a + "\n2. " + b
     i=0
     while not (i == "1") and not (i == "2"):
         i = raw_input('>')
+    if profile:
+        print "Saving your choice in the database"
+        profile["saved_responses"].append(i)
+        profile.sync()
+        
     progress_points += 1
     return int(i) - 1
 
-def merge(left, right):
+def merge(left, right, profile=None):
     result = []
     i, j = 0, 0
     while i < len(left) and j < len(right):
-        if ask_user(left[i], right[j]):
+        if ask_user(left[i], right[j], profile):
             result.append(left[i])
             i += 1
         else:
@@ -84,22 +89,21 @@ def merge(left, right):
     
     return result
 
-def mergesort(lst):
+def mergesort(lst, profile=None):
     if len(lst) <= 1:
         return lst
     middle = int(len(lst) / 2)
-    left = mergesort(lst[:middle])
-    right = mergesort(lst[middle:])
-    result = merge(left, right)
+    left = mergesort(lst[:middle],profile)
+    right = mergesort(lst[middle:],profile)
+    result = merge(left, right, profile)
     if len(result) > top:
         result = result[-top:]
     return result
 
 if __name__ == "__main__":
 
-    names = loadprofile()
-    ranking = mergesort(names)
+    names, profile = loadprofile()
+    ranking = mergesort(names, profile)
     print "Progress: " + str(progress_points) + "/" + str(progress_max)    
     print "Top " + str(len(ranking)) + " (Worst to Best):"
-    print len(ranking)
     print ranking
