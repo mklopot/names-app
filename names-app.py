@@ -1,29 +1,31 @@
 #!/usr/bin/python
 
+import copy
 import random
 import math
 import shelve
 
 global progress_max
 global progress_points
-global saved_responses
-saved_responses = []
 global top
+global replay_sequence
+replay_sequence = []
 top = 8
 
 def loadprofile(profile="default"):
     profile = shelve.open(profile, writeback=True) 
-    if "initsequence" in profile:
+    if "initdataset" in profile:
         print "Loading saved profile..."
-        global saved_responses
         global progress_max
         global progress_points
+        global replay_sequence
         global top
-        saved_responses = profile["saved_responses"]
+        replay_sequence = copy.copy(profile["saved_sequence"])
+        print "Loading saved sequence into replay sequence", replay_sequence
         progress_max = profile["progress_max"]
         progress_points = profile["progress_points"]
         top = profile["top"]
-        return profile["initsequence"], profile
+        return profile["initdataset"], profile
     else:
         print "Saved profile not found, initializing..."
         return createprofile(profile), profile 
@@ -32,6 +34,7 @@ def loadprofile(profile="default"):
 def createprofile(profile="default", filename="names.txt"):
     global progress_max
     global progress_points
+    global replay_sequence
     f = open(filename)
     names = f.readlines()
     random.shuffle(names)
@@ -43,29 +46,40 @@ def createprofile(profile="default", filename="names.txt"):
 
     profile["progress_points"] = progress_points
     profile["progress_max"] = progress_max
-    profile["initsequence"] = names
-    profile["saved_responses"] = []
+    profile["initdataset"] = names
+    profile["saved_sequence"] = []
+    print "Initializing replay sequence"
     profile["top"] = top
     profile.sync()
     
     return names
 
+def replay():
+    global replay_sequence
+    print "replay_sequence is", replay_sequence
+    if replay_sequence:
+        yield replay_sequence.pop(0)
+    else:
+        yield None
+
 def ask_user(a, b, profile=None):
     global progress_points
     print "Progress: " + str(progress_points) + " of at most " + str(progress_max)
-    print a
-    print b
     print "Which of these names do you like better?\nPress (1) or (2)\n1. " + a + "\n2. " + b
     i=0
     while not (i == "1") and not (i == "2"):
-        i = raw_input('>')
-    if profile:
-        print "Saving your choice in the database"
-        profile["saved_responses"].append(i)
-        profile.sync()
-        
-    progress_points += 1
+        i = next(replay())
+        print "Replay said", i
+        if not i:
+            i = raw_input('>')
+            if profile:
+                print "Saving your choice in the database"
+                profile["saved_sequence"].append(i)
+                print "Database replay sequence is now", profile["saved_sequence"]
+                profile.sync()
+                progress_points += 1
     return int(i) - 1
+
 
 def merge(left, right, profile=None):
     result = []
@@ -81,7 +95,8 @@ def merge(left, right, profile=None):
     global progress_points
     points = len(left) - i
     points += len(right) - j - 1
-    print "Bonus progress: " + str(points)
+    if points > 0:
+        print "BONUS!!! " + str(points) + " Progress Points!!!"
 #    progress_points += points
 
     result += left[i:]
