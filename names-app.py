@@ -94,12 +94,12 @@ def merge(left, right, profile=None):
             result.append(right[j])
             j += 1
 
-    global progress_points
+    global progress_max
     points = len(left) - i
     points += len(right) - j - 1
     if points > 0:
         print "BONUS!!! " + str(points) + " Progress Points!!!"
-#    progress_points += points
+    progress_max -= points
 
     result += left[i:]
     result += right[j:]
