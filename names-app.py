@@ -1,14 +1,35 @@
 #!/usr/bin/python
 
-top = 8
-
 import random
 import math
+import shelve
 
 global progress_max
 global progress_points
+global saved_responses
+saved_responses = []
+global top
+top = 8
 
-def loadfile(filename = "names.txt"):
+def loadprofile(profile="default"):
+    profile = shelve.open(profile) 
+    if "initsequence" in profile:
+        print "Loading saved profile..."
+        global saved_responses
+        global progress_max
+        global progress_points
+        global top
+        saved_responses = profile["saved_responses"]
+        progress_max = profile["progress_max"]
+        progress_points = profile["progress_points"]
+        top = profile["top"]
+        return profile["initsequence"]
+    else:
+        print "Saved profile not found, initializing..."
+        return createprofile(profile) 
+   
+
+def createprofile(profile="default", filename="names.txt"):
     global progress_max
     global progress_points
     f = open(filename)
@@ -18,9 +39,17 @@ def loadfile(filename = "names.txt"):
     length = len(names)
     k = math.floor(math.log(length,2)) + 1
     progress_max = 1 + k * length - 2 ** k
-    #progress_max = length * math.ceil(math.log(length,2))       
     progress_points = 0
 
+    profile["progress_points"] = progress_points
+    profile["progress_max"] = progress_max
+    profile["initsequence"] = names
+    profile["saved_responses"] = []
+    profile["top"] = top
+    profile.sync()
+
+
+    
     return names
 
 def ask_user(a, b):
@@ -68,7 +97,7 @@ def mergesort(lst):
 
 if __name__ == "__main__":
 
-    names = loadfile()
+    names = loadprofile()
     ranking = mergesort(names)
     print "Progress: " + str(progress_points) + "/" + str(progress_max)    
     print "Top " + str(len(ranking)) + " (Worst to Best):"
