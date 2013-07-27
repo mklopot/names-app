@@ -25,7 +25,7 @@ def loadprofile(profile="default"):
         global replay_sequence
         global top
         replay_sequence = copy.copy(profile["saved_sequence"])
-        print "Loading saved sequence into replay sequence", replay_sequence
+        logging.debug("Loading saved sequence into replay sequence " + str(replay_sequence))
         progress_max = profile["progress_max"]
         progress_points = profile["progress_points"]
         top = profile["top"]
@@ -49,15 +49,16 @@ def createprofile(profile="default", filename="names.txt"):
     
     profile["initdataset"] = names
     profile["saved_sequence"] = []
-    print "Initializing replay sequence"
+    logging.debug("Initializing replay sequence")
     profile["top"] = top
 
     length = len(names)
     k = math.floor(math.log(length,2)) + 1
-    profile["progress_max"] = 1 + k * length - 2 ** k
-    print profile["progress_max"]
+    profile["progress_max"] = int(1 + k * length - 2 ** k)
+    logging.debug("Worst-case number of comparisons: " + str(profile["progress_max"]))
     progress_max = profile["progress_max"] 
     profile.sync()
+    print "Created a profile to select top " + str(top) + " out of " + str(length) + " names"
     
     return names
 
@@ -73,6 +74,7 @@ def ask_user(a, b, profile=None):
     global progress_points
     print
     print 17 * "_"
+    print
     print "Progress: " + str(profile["progress_points"]) + " of less than " + str(progress_max)
     print "Which of these names do you like better?\nPress (1) or (2)\n1. " + a + "\n2. " + b
     i=0
