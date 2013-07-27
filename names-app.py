@@ -69,17 +69,22 @@ def ask_user(a, b, profile=None):
     print "Progress: " + str(profile["progress_points"]) + " of at most " + str(progress_max)
     print "Which of these names do you like better?\nPress (1) or (2)\n1. " + a + "\n2. " + b
     i=0
-    while not (i == "1") and not (i == "2"):
-        i = next(replay())
-        print "Replay said", i
-        if not i:
+    i = next(replay())
+    print "Replay said", i
+    if i:
+        while i and i not in ["1", "2"]:
+            i = next(repay())
+            print "Replay said:", i
+    else:
+        i = raw_input('>')
+        while i not in ["1", "2"]:
             i = raw_input('>')
-            if profile:
-                print "Saving your choice in the database"
-                profile["saved_sequence"].append(i)
-                print "Database replay sequence is now", profile["saved_sequence"]
-                profile["progress_points"] += 1
-                profile.sync()
+        if profile:
+            print "Saving your choice in the database"
+            profile["saved_sequence"].append(i)
+            print "Database replay sequence is now", profile["saved_sequence"]
+            profile["progress_points"] += 1
+            profile.sync()
     return int(i) - 1
 
 
