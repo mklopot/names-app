@@ -4,6 +4,11 @@ import copy
 import random
 import math
 import shelve
+import sys
+import logging
+
+FORMAT = "%(levelname)s %(funcName)s: %(message)s"
+logging.basicConfig(stream=sys.stderr, level=logging.INFO, format=FORMAT)
 
 global progress_max
 global top
@@ -58,7 +63,7 @@ def createprofile(profile="default", filename="names.txt"):
 
 def replay():
     global replay_sequence
-    print "replay_sequence is", replay_sequence
+    logging.debug("replay_sequence is " + str(replay_sequence))
     if replay_sequence:
         yield replay_sequence.pop(0)
     else:
@@ -66,23 +71,26 @@ def replay():
 
 def ask_user(a, b, profile=None):
     global progress_points
-    print "Progress: " + str(profile["progress_points"]) + " of at most " + str(progress_max)
+    print
+    print 17 * "_"
+    print "Progress: " + str(profile["progress_points"]) + " of less than " + str(progress_max)
     print "Which of these names do you like better?\nPress (1) or (2)\n1. " + a + "\n2. " + b
     i=0
     i = next(replay())
-    print "Replay said", i
+    logging.debug("Replay said " + str(i))
     if i:
         while i and i not in ["1", "2"]:
             i = next(repay())
-            print "Replay said:", i
+            logging.debug("Replay said " + str(i))
     else:
         i = raw_input('>')
         while i not in ["1", "2"]:
             i = raw_input('>')
         if profile:
-            print "Saving your choice in the database"
+            
+            logging.debug("Saving your selection in the database")
             profile["saved_sequence"].append(i)
-            print "Database replay sequence is now", profile["saved_sequence"]
+            logging.debug("Database replay sequence is now" + str(profile["saved_sequence"]))
             profile["progress_points"] += 1
             profile.sync()
     return int(i) - 1
