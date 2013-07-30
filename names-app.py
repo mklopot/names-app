@@ -30,12 +30,17 @@ def createprofile(profile="default", filename="names.txt"):
     names = f.readlines()
     random.shuffle(names)
     names = map(lambda x: x.rstrip(), names)
-    profile["top"] = 10
+    length = len(names)
+    os.system('clear')
+    print "Loaded "+str(length)+ " entries to sort."
+    top = input("How long of a list of top names do you want? (Longer list means more questions to answer)\n\n>") 
+    if not (1 < top < length):
+        top = length
+    profile["top"] = top 
     profile["progress_points"] = 0
     profile["initdataset"] = names
     profile["saved_sequence"] = []
     logging.debug("Initializing replay sequence")
-    length = len(names)
 
     k = math.floor(math.log(length,2)) + 1
     profile["progress_max"] = int(1 + k * length - 2 ** k)
@@ -50,7 +55,7 @@ def ask_user(a, b, profile):
     print
     print "Progress: " + str(profile["progress_points"]) + " of less than " + str(profile["progress_max"])
     print
-    print "Which of these names do you like better?\nPress (1) or (2)\n\n1. " + a + "\n2. " + b
+    print "Which of these names do you like better?\nEnter (1) or (2)\n\n1. " + a + "\n2. " + b
     print
     global replay_sequence
     i=None
