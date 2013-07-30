@@ -17,12 +17,9 @@ def loadprofile(profile="default"):
     profile = shelve.open(profile, writeback=True) 
     if "initdataset" in profile:
         print "Loading saved profile..."
-        global progress_points
         global replay_sequence
         replay_sequence = copy.copy(profile["saved_sequence"])
         logging.debug("Loading saved sequence into replay sequence " + str(replay_sequence))
-        progress_points = profile["progress_points"]
-  
         return profile["initdataset"], profile
     else:
         print "Saved profile not found, initializing..."
@@ -30,28 +27,24 @@ def loadprofile(profile="default"):
    
 
 def createprofile(profile="default", filename="names.txt"):
-    global progress_points
     global replay_sequence
-
     f = open(filename)
     names = f.readlines()
     random.shuffle(names)
     names = map(lambda x: x.rstrip(), names)
     profile["top"] = 10
     profile["progress_points"] = 0
-    
     profile["initdataset"] = names
     profile["saved_sequence"] = []
     logging.debug("Initializing replay sequence")
-
-
     length = len(names)
+
     k = math.floor(math.log(length,2)) + 1
     profile["progress_max"] = int(1 + k * length - 2 ** k)
-    logging.debug("Worst-case number of comparisons: " + str(profile["progress_max"]))
+
+    logging.info("Worst-case number of comparisons: " + str(profile["progress_max"]))
     profile.sync()
-    print "Created a profile to select top " + str(top) + " out of " + str(length) + " names"
-    
+    logging.info("Created a profile to select top " + str(profile["top"]) + " out of " + str(length) + " names")
     return names
 
 def replay():
@@ -63,7 +56,6 @@ def replay():
         yield None
 
 def ask_user(a, b, profile):
-    global progress_points
     print
     print 17 * "_"
     print
@@ -124,9 +116,8 @@ def mergesort(lst, profile):
     return result
 
 if __name__ == "__main__":
-
     names, profile = loadprofile()
     ranking = mergesort(names, profile)
-    print "Progress: " + str(progress_points) + "/" + str(progress_max)    
+    print "Progress: " + str(profile["progress_points"]) + "/" + str(profile["progress_max"])    
     print "Top " + str(len(ranking)) + " (Worst to Best):"
     print ranking
