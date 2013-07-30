@@ -45,14 +45,6 @@ def createprofile(profile="default", filename="names.txt"):
     logging.info("Created a profile to select top " + str(profile["top"]) + " out of " + str(length) + " names")
     return names
 
-def replay():
-    global replay_sequence
-    logging.debug("replay_sequence is " + str(replay_sequence))
-    if replay_sequence:
-        yield replay_sequence.pop(0)
-    else:
-        yield None
-
 def ask_user(a, b, profile):
     os.system('clear')
     print
@@ -60,12 +52,14 @@ def ask_user(a, b, profile):
     print
     print "Which of these names do you like better?\nPress (1) or (2)\n\n1. " + a + "\n2. " + b
     print
-    i=0
-    i = next(replay())
-    logging.debug("Replay said " + str(i))
+    global replay_sequence
+    i=None
+    if replay_sequence:
+        i = replay_sequence.pop(0)
+        logging.debug("Replay said " + str(i))
     if i:
-        while i and i not in ["1", "2"]:
-            i = next(repay())
+        while replay_sequence and i not in ["1", "2"]:
+            i = replay_sequence.pop(0)
             logging.debug("Replay said " + str(i))
     else:
         i = raw_input('>')
