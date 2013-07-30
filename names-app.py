@@ -6,12 +6,10 @@ import math
 import shelve
 import sys
 import logging
+import os
 
 LOGFORMAT = "%(levelname)s %(funcName)s: %(message)s"
 logging.basicConfig(stream=sys.stderr, level=logging.INFO, format=LOGFORMAT)
-
-global replay_sequence
-replay_sequence = []
 
 def loadprofile(profile="default"):
     profile = shelve.open(profile, writeback=True) 
@@ -25,9 +23,9 @@ def loadprofile(profile="default"):
         print "Saved profile not found, initializing..."
         return createprofile(profile), profile 
    
-
 def createprofile(profile="default", filename="names.txt"):
     global replay_sequence
+    replay_sequence = []
     f = open(filename)
     names = f.readlines()
     random.shuffle(names)
@@ -42,7 +40,7 @@ def createprofile(profile="default", filename="names.txt"):
     k = math.floor(math.log(length,2)) + 1
     profile["progress_max"] = int(1 + k * length - 2 ** k)
 
-    logging.info("Worst-case number of comparisons: " + str(profile["progress_max"]))
+    logging.debug("Worst-case number of comparisons: " + str(profile["progress_max"]))
     profile.sync()
     logging.info("Created a profile to select top " + str(profile["top"]) + " out of " + str(length) + " names")
     return names
@@ -56,11 +54,12 @@ def replay():
         yield None
 
 def ask_user(a, b, profile):
-    print
-    print 17 * "_"
+    os.system('clear')
     print
     print "Progress: " + str(profile["progress_points"]) + " of less than " + str(profile["progress_max"])
-    print "Which of these names do you like better?\nPress (1) or (2)\n1. " + a + "\n2. " + b
+    print
+    print "Which of these names do you like better?\nPress (1) or (2)\n\n1. " + a + "\n2. " + b
+    print
     i=0
     i = next(replay())
     logging.debug("Replay said " + str(i))
@@ -70,14 +69,18 @@ def ask_user(a, b, profile):
             logging.debug("Replay said " + str(i))
     else:
         i = raw_input('>')
-        while i not in ["1", "2"]:
+        while i.lower() not in ["1", "2", "exit", "quit", "bye"]:
             i = raw_input('>')
+        if i.lower() in ["exit", "quit", "bye"]:
+            print "Saving and closing..."
+            sys.exit()
 
         logging.debug("Saving your selection in the database")
         profile["saved_sequence"].append(i)
         logging.debug("Database replay sequence is now" + str(profile["saved_sequence"]))
         profile["progress_points"] += 1
         profile.sync()
+    os.system('clear')
     return int(i) - 1
 
 
@@ -118,6 +121,13 @@ def mergesort(lst, profile):
 if __name__ == "__main__":
     names, profile = loadprofile()
     ranking = mergesort(names, profile)
-    print "Progress: " + str(profile["progress_points"]) + "/" + str(profile["progress_max"])    
-    print "Top " + str(len(ranking)) + " (Worst to Best):"
-    print ranking
+    ranking.reverse()
+    logging.debug("Done with progress showing " + str(profile["progress_points"]) + "/" + str(profile["progress_max"]))    
+    print
+    print "Done!!!"
+    print
+    print "Top " + str(len(ranking)) + " (Best to Worse):"
+    for i in enumerate(ranking):
+        number, name = i
+        print str(number+1)+".   " + name
+
