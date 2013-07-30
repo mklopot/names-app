@@ -33,9 +33,25 @@ def createprofile(profile="default", filename="names.txt"):
     length = len(names)
     os.system('clear')
     print "Loaded "+str(length)+ " entries to sort."
-    top = input("How long of a list of top names do you want? (Longer list means more questions to answer)\n\n>") 
+    top = raw_input("How long of a list of top names do you want?\nLonger list means more questions to answer.\nNot entering a setting here will create a Top 25 list by default.\n\n>") 
     if not (1 < top < length):
-        top = length
+        top = 25
+
+    print "Entries can be shown with other preceding names, e.g. if selecting a middle name,  you can enter the first name here."
+    prefix = raw_input("Preceding names (Press ENTER for none) >")
+    print "Entries can be shown with other following names, e.g. if selecting a first name, enter the last name here."
+    suffix = raw_input("Following names (Press ENTER for none) >")
+
+    if prefix:
+        profile["prefix"] = prefix + " "
+    else:
+        profile["prefix"] = ""
+
+    if suffix:
+        profile["suffix"] = " " + suffix
+    else:
+        profile["suffix"] = ""
+
     profile["top"] = top 
     profile["progress_points"] = 0
     profile["initdataset"] = names
@@ -55,7 +71,7 @@ def ask_user(a, b, profile):
     print
     print "Progress: " + str(profile["progress_points"]) + " of less than " + str(profile["progress_max"])
     print
-    print "Which of these names do you like better?\nEnter (1) or (2)\n\n1. " + a + "\n2. " + b
+    print "Which of these names do you like better?\nEnter (1) or (2)\n\n1. " + profile["prefix"] + a + profile["suffix"] + "\n2. " + profile["prefix"] + b + profile["suffix"]
     print
     global replay_sequence
     i=None
