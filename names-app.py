@@ -7,8 +7,8 @@ import shelve
 import sys
 import logging
 
-FORMAT = "%(levelname)s %(funcName)s: %(message)s"
-logging.basicConfig(stream=sys.stderr, level=logging.INFO, format=FORMAT)
+LOGFORMAT = "%(levelname)s %(funcName)s: %(message)s"
+logging.basicConfig(stream=sys.stderr, level=logging.INFO, format=LOGFORMAT)
 
 global progress_max
 global top
