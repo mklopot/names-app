@@ -9,7 +9,7 @@ import logging
 import os
 
 LOGFORMAT = "%(levelname)s %(funcName)s: %(message)s"
-logging.basicConfig(stream=sys.stderr, level=logging.INFO, format=LOGFORMAT)
+logging.basicConfig(stream=sys.stderr, level=logging.DEBUG, format=LOGFORMAT)
 
 def loadprofile(profile="default"):
     profile = shelve.open(profile, writeback=True) 
@@ -33,10 +33,10 @@ def createprofile(profile="default", filename="names.txt"):
     length = len(names)
     os.system('clear')
     print "Loaded "+str(length)+ " entries to sort."
-    top = raw_input("How long of a list of top names do you want?\nLonger list means more questions to answer.\nNot entering a setting here will create a Top 25 list by default.\n\n>") 
-    if not (1 < top < length):
+    top = int(raw_input("How long of a list of top names do you want?\nLonger list means more questions to answer.\nNot entering a setting here will create a Top 25 list by default.\n\n>")) 
+    if not (0 < top <= length):
         top = 25
-
+    logging.debug("top set to " + str(top))
     print "Entries can be shown with a title, such as Mr. or Mrs., and other preceding names, e.g. if selecting a middle name, you can enter the first name here."
     prefix = raw_input("Preceding names and/or prefixes (Press ENTER for none) >")
     print "Entries can be shown with other names following, or suffixes, such as Jr., e.g. if selecting a first name, you can enter the last name here."
@@ -110,7 +110,7 @@ def merge(left, right, profile):
         else:
             result.append(left[i])
             i += 1
-    logging.debug("Result after merge: " + str(result))
+    logging.debug("Result after first phase of merge: " + str(result))
     points = len(left) - i
     points += len(right) - j - 1
     if points > 0:
@@ -120,7 +120,7 @@ def merge(left, right, profile):
     if len(result) < profile["top"]:
         result += left[i:]
         result += right[j:]
-    logging.debug("Pruned result: " + str(result))
+    logging.debug("Appended merge result: " + str(result))
     return result
 
 def mergesort(lst, profile):
