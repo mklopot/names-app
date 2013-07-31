@@ -144,4 +144,5 @@ if __name__ == "__main__":
     for i in enumerate(ranking):
         number, name = i
         print str(number+1)+".   " + name
+    del profile["initdataset"]
 
