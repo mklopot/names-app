@@ -103,23 +103,24 @@ def ask_user(a, b, profile):
 def merge(left, right, profile):
     result = []
     i, j = 0, 0
-    while i < len(left) and j < len(right):
+    while i < len(left) and j < len(right) and len(result) < profile["top"]:
         if ask_user(left[i], right[j], profile):
-            result.append(left[i])
-            i += 1
-        else:
             result.append(right[j])
             j += 1
-
+        else:
+            result.append(left[i])
+            i += 1
+    logging.debug("Result after merge: " + str(result))
     points = len(left) - i
     points += len(right) - j - 1
     if points > 0:
         logging.debug("Maximum required progress points reduced by " + str(points))
     profile["progress_max"] -= points
 
-    result += left[i:]
-    result += right[j:]
-    
+    if len(result) < profile["top"]:
+        result += left[i:]
+        result += right[j:]
+    logging.debug("Pruned result: " + str(result))
     return result
 
 def mergesort(lst, profile):
@@ -130,13 +131,12 @@ def mergesort(lst, profile):
     right = mergesort(lst[middle:],profile)
     result = merge(left, right, profile)
     if len(result) > profile["top"]:
-        result = result[-profile["top"]:]
+        result = result[:profile["top"]]
     return result
 
 if __name__ == "__main__":
     names, profile = loadprofile()
     ranking = mergesort(names, profile)
-    ranking.reverse()
     logging.debug("Done with progress showing " + str(profile["progress_points"]) + "/" + str(profile["progress_max"]))    
     print "Done!!!"
     print
