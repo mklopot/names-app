@@ -111,7 +111,6 @@ def merge(left, right, profile):
             result.append(right[j])
             j += 1
 
-    global progress_max
     points = len(left) - i
     points += len(right) - j - 1
     if points > 0:
@@ -139,7 +138,6 @@ if __name__ == "__main__":
     ranking = mergesort(names, profile)
     ranking.reverse()
     logging.debug("Done with progress showing " + str(profile["progress_points"]) + "/" + str(profile["progress_max"]))    
-    print
     print "Done!!!"
     print
     print "Top " + str(len(ranking)) + " (Best to Worse):"
