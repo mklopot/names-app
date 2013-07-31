@@ -37,10 +37,10 @@ def createprofile(profile="default", filename="names.txt"):
     if not (1 < top < length):
         top = 25
 
-    print "Entries can be shown with other preceding names, e.g. if selecting a middle name,  you can enter the first name here."
-    prefix = raw_input("Preceding names (Press ENTER for none) >")
-    print "Entries can be shown with other following names, e.g. if selecting a first name, enter the last name here."
-    suffix = raw_input("Following names (Press ENTER for none) >")
+    print "Entries can be shown with a title, such as Mr. or Mrs., and other preceding names, e.g. if selecting a middle name, you can enter the first name here."
+    prefix = raw_input("Preceding names and/or prefixes (Press ENTER for none) >")
+    print "Entries can be shown with other names following, or suffixes, such as Jr., e.g. if selecting a first name, you can enter the last name here."
+    suffix = raw_input("Names following and/or suffixes (Press ENTER for none) >")
 
     if prefix:
         profile["prefix"] = prefix + " "
@@ -85,6 +85,7 @@ def ask_user(a, b, profile):
     else:
         i = raw_input('>')
         while i.lower() not in ["1", "2", "exit", "quit", "bye"]:
+            print "Valid inpits are '1', '2', or 'exit'"
             i = raw_input('>')
         if i.lower() in ["exit", "quit", "bye"]:
             print "Saving and closing..."
@@ -114,7 +115,7 @@ def merge(left, right, profile):
     points = len(left) - i
     points += len(right) - j - 1
     if points > 0:
-        print "BONUS!!! " + str(points) + " Progress Points!!!"
+        logging.debug("Maximum required progress points reduced by " + str(points))
     profile["progress_max"] -= points
 
     result += left[i:]
