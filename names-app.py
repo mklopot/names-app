@@ -9,7 +9,7 @@ import logging
 import os
 
 LOGFORMAT = "%(levelname)s %(funcName)s: %(message)s"
-logging.basicConfig(stream=sys.stderr, level=logging.DEBUG, format=LOGFORMAT)
+logging.basicConfig(stream=sys.stderr, level=logging.INFO, format=LOGFORMAT)
 
 def loadprofile(profile="default"):
     profile = shelve.open(profile, writeback=True) 
