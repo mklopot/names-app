@@ -135,7 +135,7 @@ def mergesort(lst, profile):
     return result
 
 if __name__ == "__main__":
-    names, profile = loadprofile()
+    names, profile = loadprofile("default")
     ranking = mergesort(names, profile)
     logging.debug("Done with progress showing " + str(profile["progress_points"]) + "/" + str(profile["progress_max"]))    
     print "Done!!!"
@@ -144,5 +144,8 @@ if __name__ == "__main__":
     for i in enumerate(ranking):
         number, name = i
         print str(number+1)+".   " + name
-    del profile["initdataset"]
+    if os.path.exists("default"):
+        os.remove("default")
+    if os.path.exists("default"+".db"):
+        os.remove("default"+".db")    
 
