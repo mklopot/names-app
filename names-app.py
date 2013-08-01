@@ -34,7 +34,7 @@ def createprofile(profile="default", filename="names.txt"):
     os.system('clear')
     print "Loaded "+str(length)+ " entries to sort."
 
-    top = raw_input("How long of a list of top names do you want?\nLonger list means more questions to answer.\nNot entering a setting here will create a Top 25 list by default.\n\n>") 
+    top = raw_input("By default, a Top 25 list will be created.\nIf you want a different number, enter it here.\nOhterwise, please press ENTER\n>") 
     if top.isdigit():
         top = int(top)
     else:
@@ -43,10 +43,10 @@ def createprofile(profile="default", filename="names.txt"):
     if not (0 < top <= length):
         top = 25
     logging.debug("top set to " + str(top))
-    print "Entries can be shown with a title, such as Mr. or Mrs., and other preceding names, e.g. if selecting a middle name, you can enter the first name here."
-    prefix = raw_input("Preceding names and/or prefixes (Press ENTER for none) >")
-    print "Entries can be shown with other names following, or suffixes, such as Jr., e.g. if selecting a first name, you can enter the last name here."
-    suffix = raw_input("Names following and/or suffixes (Press ENTER for none) >")
+    print "Selections can be shown with an optional title, such as Mr. or Mrs.,\nor other names preceding it.\nFor example, if selecting a middle name, you can enter the first name here.\n"
+    prefix = raw_input("(Press ENTER for none) >")
+    print "Selections can be displayed with other names following, or any suffixes, such as Jr. or III.\nIf selecting a first name, you can enter the last name here.\n"
+    suffix = raw_input("(Press ENTER for none) >")
 
     if prefix:
         profile["prefix"] = prefix + " "
