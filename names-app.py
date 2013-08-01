@@ -33,7 +33,13 @@ def createprofile(profile="default", filename="names.txt"):
     length = len(names)
     os.system('clear')
     print "Loaded "+str(length)+ " entries to sort."
-    top = int(raw_input("How long of a list of top names do you want?\nLonger list means more questions to answer.\nNot entering a setting here will create a Top 25 list by default.\n\n>")) 
+
+    top = raw_input("How long of a list of top names do you want?\nLonger list means more questions to answer.\nNot entering a setting here will create a Top 25 list by default.\n\n>") 
+    if top.isdigit():
+        top = int(top)
+    else:
+        top = 25
+
     if not (0 < top <= length):
         top = 25
     logging.debug("top set to " + str(top))
