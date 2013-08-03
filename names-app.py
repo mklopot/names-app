@@ -77,7 +77,7 @@ def ask_user(a, b, profile):
     print
     print "Progress: " + str(profile["progress_points"]) + " of less than " + str(profile["progress_max"])
     print
-    print "Which of these names do you like better?\nEnter (1) or (2)\n\n1. " + profile["prefix"] + a + profile["suffix"] + "\n2. " + profile["prefix"] + b + profile["suffix"]
+    print "Which of these names do you like better?\nEnter (1) or (2), or (f) to fail both selections.\n\n1. " + profile["prefix"] + a + profile["suffix"] + "\n2. " + profile["prefix"] + b + profile["suffix"]
     print
     global replay_sequence
     i=None
@@ -85,13 +85,13 @@ def ask_user(a, b, profile):
         i = replay_sequence.pop(0)
         logging.debug("Replay said " + str(i))
     if i:
-        while replay_sequence and i not in ["1", "2"]:
+        while replay_sequence and i not in ["1", "2", "f", "flush"]:
             i = replay_sequence.pop(0)
             logging.debug("Replay said " + str(i))
     else:
         i = raw_input('>')
-        while i.lower() not in ["1", "2", "exit", "quit", "bye"]:
-            print "Valid inpits are '1', '2', or 'exit'"
+        while i.lower() not in ["1", "2", "f", "flush", "exit", "quit", "bye"]:
+            print "Valid inpits are '1', '2', 'f', or 'exit'"
             i = raw_input('>')
         if i.lower() in ["exit", "quit", "bye"]:
             print "Saving and closing..."
@@ -103,19 +103,26 @@ def ask_user(a, b, profile):
         profile["progress_points"] += 1
         profile.sync()
     os.system('clear')
-    return int(i) - 1
+    if i in ["f", "flush"]:
+        return "f"
+    else:
+        return int(i) - 1
 
 
 def merge(left, right, profile):
     result = []
     i, j = 0, 0
     while i < len(left) and j < len(right) and len(result) < profile["top"]:
-        if ask_user(left[i], right[j], profile):
-            result.append(right[j])
-            j += 1
+        input = ask_user(left[i], right[j], profile)
+        if input == "f":
+            return result
         else:
-            result.append(left[i])
-            i += 1
+            if input:
+                result.append(right[j])
+                j += 1
+            else:
+                result.append(left[i])
+                i += 1
     logging.debug("Result after first phase of merge: " + str(result))
     points = len(left) - i
     points += len(right) - j - 1
