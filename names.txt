@@ -389,7 +389,6 @@ Fletcher
 Florencio
 Florentino
 Floyd
-Forest
 Forrest
 Foster
 Frances
@@ -401,7 +400,6 @@ Frankie
 Franklin
 Fred
 Freddie
-Freddy
 Frederic
 Frederick
 Fredric
@@ -614,7 +612,6 @@ Kenton
 Kermit
 Kerry
 Kevin
-Kim
 King
 Kip
 Kirby
@@ -715,7 +712,6 @@ Marshall
 Martin
 Marty
 Marvin
-Mary
 Mason
 Mathew
 Matt
