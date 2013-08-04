@@ -148,7 +148,6 @@ Carlo
 Carlos
 Carlton
 Carmelo
-Carmen
 Carmine
 Carroll
 Carson
@@ -285,7 +284,6 @@ Domingo
 Dominic
 Don
 Donald
-Donn
 Donnell
 Donny
 Donovan
@@ -329,7 +327,6 @@ Elijah
 Eliseo
 Elisha
 Elliot
-Elliott
 Ellis
 Ellsworth
 Elmer
@@ -342,13 +339,11 @@ Elvis
 Elwood
 Emanuel
 Emerson
-Emery
 Emil
 Emile
 Emilio
 Emmanuel
 Emmett
-Emmitt
 Emory
 Enoch
 Enrique
@@ -356,7 +351,6 @@ Erasmo
 Eric
 Erich
 Erik
-Erin
 Ernest
 Ernesto
 Ernie
@@ -370,7 +364,6 @@ Eugenio
 Eusebio
 Evan
 Everett
-Everette
 Ezekiel
 Ezra
 Fabian
@@ -616,12 +609,8 @@ King
 Kip
 Kirby
 Kirk
-Korey
-Kory
-Kraig
 Kris
 Kurt
-Kurtis
 Kyle
 Lamar
 Lamont
@@ -641,7 +630,6 @@ Leigh
 Leland
 Lemuel
 Len
-Lenard
 Lenny
 Leo
 Leon
@@ -713,7 +701,6 @@ Martin
 Marty
 Marvin
 Mason
-Mathew
 Matt
 Matthew
 Maurice
@@ -957,8 +944,6 @@ Taylor
 Ted
 Teddy
 Teodoro
-Terence
-Terrance
 Terrell
 Terrence
 Terry
