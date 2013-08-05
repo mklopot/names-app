@@ -147,6 +147,55 @@ def mergesort(lst, profile):
         result = result[:profile["top"]]
     return result
 
+class Mergesort():
+    def self.__init__(self, initsequence, profile):
+        self.sequence = initsequence
+        self.profile = profile
+        self.level = 1
+        self.counter = 1
+        self.mergeresult = []
+        self.premerge_left = [self.sequence[0]]
+        self.premerge_right = [self.sequence[1]]
+    
+    def get_selections(self):
+        return self.premerge_left(0), self.premerge_right(0)
+        
+    def merge(self, choice):
+        logging.debug("Called with choice="+str(choice))
+        logging.debug("Sequence is "+str(self.sequence))
+        logging.debug("First pre-merge sequence " + str(self.premerge_left))
+        logging.debug("Second pre-merge sequence " + str(self.premerge_right))
+        logging.debug("Level counter is "+str(self.level)+", index counter is "+str(self.counter))
+        logging.debug("Merging...")
+        if choice = self.premerge_left(0):
+            self.mergeresult.append(self.premerge_left.pop(0))
+        elif choice = self.premerge_right(0):
+            self.mergeresult.append(self.premerge_right.pop(0))
+        logging.debug("Merge result list is "+str(self.mergeresult))
+        if premerge_left == [] or premerge_right == []:
+            logging.debug("One of the pre-merge queues is empty, extending the merge result to include the other one"
+            self.mergeresult.extend(self.premerge_left)
+            self.mergeresult.extend(self.premerge_right)
+            logging.debug("Merge result is now "+str(self.mergeresult)
+            i = 2 * self.counter * self.level
+            self.sequence(i:i+level) = self.mergeresult
+            logging.debug("Main sequence updated to "+str(self.sequence))
+            if i < len(self.sequence):
+                self.counter += 1
+                logging.debug("Incremented the counter, now set to "+str(self.counter))
+                self.premerge_left = self.sequence[2*(self.counter-2)*self.level:2*(self.counter-1)*self.level]
+                self.premerge_right = self.sequence[2*(self.counter-1)*self.level:2*(self.counter)*self.level]
+                logging.debug("Loaded new pre-merge sequences: "+str(self.premerge_left)+" and "+str(self.premerge_right))
+#                return None, self.percent_done
+            elif i = len(self.sequence) and level < len(self.sequence):
+                self.level *= 2
+                self.counter = 1
+#                return None, self.percent_done
+            elif level >= len(sequence):
+                return self.sequence, 100
+        percent_done = int(math.floor(self.profile["progress_points"] / self.profile["max_progress"]))        
+        return None, percent_done
+
 if __name__ == "__main__":
     names, profile = loadprofile("default")
     ranking = mergesort(names, profile)
