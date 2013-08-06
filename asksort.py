@@ -9,7 +9,7 @@ import logging
 import os
 
 LOGFORMAT = "%(levelname)s %(funcName)s: %(message)s"
-logging.basicConfig(stream=sys.stderr, level=logging.INFO, format=LOGFORMAT)
+logging.basicConfig(stream=sys.stderr, level=logging.DEBUG, format=LOGFORMAT)
 
 def loadprofile(profile="default"):
     profile = shelve.open(profile, writeback=True) 
@@ -148,14 +148,14 @@ def mergesort(lst, profile):
     return result
 
 class Mergesort():
-    def __init__(self, initsequence, profile):
+    def __init__(self, initsequence, top=25):
         self.sequence = initsequence
-        self.profile = profile
         self.level = 1
-        self.counter = 1
+        self.counter = 0
         self.mergeresult = []
         self.premerge_left = [self.sequence[0]]
         self.premerge_right = [self.sequence[1]]
+        self.top = top
         self.progress = 0
 
         length = len(self.sequence)
@@ -171,9 +171,12 @@ class Mergesort():
     def merge(self, choice):
         logging.debug("Called with choice="+str(choice))
         logging.debug("Sequence is "+str(self.sequence))
+        logging.debug("Level counter is "+str(self.level)+", index counter is "+str(self.counter))
+        if self.level >= len(self.sequence):
+            logging.debug("The level counter is already greater or equal to sequence length, returning sorted sequence and exiting")
+            return self.sequence
         logging.debug("First pre-merge sequence " + str(self.premerge_left))
         logging.debug("Second pre-merge sequence " + str(self.premerge_right))
-        logging.debug("Level counter is "+str(self.level)+", index counter is "+str(self.counter))
         logging.debug("Merging...")
         if choice == self.premerge_left[0]:
             self.mergeresult.append(self.premerge_left.pop(0))
@@ -185,19 +188,26 @@ class Mergesort():
             self.mergeresult.extend(self.premerge_left)
             self.mergeresult.extend(self.premerge_right)
             logging.debug("Merge result is now "+str(self.mergeresult))
-            i = 2 * self.counter * self.level
-            self.sequence[i:i+self.level] = self.mergeresult
+            i = self.counter * self.level
+            self.sequence[i:i+2*self.level] = self.mergeresult
+            self.mergeresult = []
             logging.debug("Main sequence updated to "+str(self.sequence))
             if i < len(self.sequence):
-                self.counter += 1
-                logging.debug("Incremented the counter, now set to "+str(self.counter))
-                self.premerge_left = self.sequence[2*(self.counter-2)*self.level:2*(self.counter-1)*self.level]
-                self.premerge_right = self.sequence[2*(self.counter-1)*self.level:2*(self.counter)*self.level]
+                self.counter += 2
+                logging.debug("Counter incremented to "+str(self.counter))
+                self.premerge_left = self.sequence[self.counter*self.level:(self.counter+1)*self.level]
+                self.premerge_right = self.sequence[(self.counter+1)*self.level:(self.counter+2)*self.level]
                 logging.debug("Loaded new pre-merge sequences: "+str(self.premerge_left)+" and "+str(self.premerge_right))
-            elif i == len(self.sequence) and level < len(self.sequence):
+            if self.counter*self.level >= len(self.sequence) and self.level < len(self.sequence):
                 self.level *= 2
-                self.counter = 1
-            elif level >= len(sequence):
+                logging.debug("Incrementing level, now set to "+str(self.level))
+                self.counter = 0
+                logging.debug("Counter reset to zero")
+                self.premerge_left = self.sequence[self.counter*self.level:(self.counter+1)*self.level]
+                self.premerge_right = self.sequence[(self.counter+1)*self.level:(self.counter+2)*self.level]
+                logging.debug("Loaded new pre-merge sequences: "+str(self.premerge_left)+" and "+str(self.premerge_right))
+            if self.level >= len(self.sequence):
+                logging.debug("The level counter is now greater or equal to sequence length, returning sorted sequence and exiting")
                 return self.sequence
 
 if __name__ == "__main__":
