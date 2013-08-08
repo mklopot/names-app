@@ -92,7 +92,7 @@ class Mergesort():
         elif choice == self.premerge_right[0]:
             self.mergeresult.append(self.premerge_right.pop(0))
         logging.debug("Merge result list is "+str(self.mergeresult))
-        if self.premerge_left == [] or self.premerge_right == []:
+        while self.premerge_left == [] or self.premerge_right == []:
             logging.debug("One of the pre-merge queues is empty, extending the merge result to include the other one")
             self.mergeresult.extend(self.premerge_left)
             self.mergeresult.extend(self.premerge_right)
