@@ -58,16 +58,17 @@ class Mergesort():
     """
 
     def __init__(self, initsequence, top=25):
-        self.sequence = initsequence
+        self.initsequence = initsequence
         self.level = 1
-        self.counter = 0
+        self.sequence_in = [[x] for x in initsequence]
+        self.sequence_out = []
         self.mergeresult = []
-        self.premerge_left = [self.sequence[0]]
-        self.premerge_right = [self.sequence[1]]
+        self.premerge_left = self.sequence_in.pop(0)
+        self.premerge_right = self.sequence_in.pop(0)
         self.top = top
         self.progress = 0
 
-        length = len(self.sequence)
+        length = len(self.initsequence)
         k = math.floor(math.log(length,2)) + 1
         self.max_progress = int(1 + k * length - 2 ** k)
 
@@ -79,11 +80,11 @@ class Mergesort():
         
     def merge(self, choice):
         logging.debug("Called with choice="+str(choice))
-        logging.debug("Sequence is "+str(self.sequence))
-        logging.debug("Level counter is "+str(self.level)+", index counter is "+str(self.counter))
-        if self.level >= len(self.sequence):
-            logging.debug("The level counter is already greater or equal to sequence length, returning sorted sequence and exiting")
-            return self.sequence
+        #logging.debug("In/Out Sequences are ", repr(self.sequence_in), repr(self.sequence_out))
+        logging.debug("Level counter is "+str(self.level))
+        if len(self.sequence_in) == 1 and not self.sequence_out and not self.premerge_left and not self.premerge_right and not self.mergeresult:
+            logging.debug("Everything has already been sorted")
+            return self.sequence_in[0]
         logging.debug("First pre-merge sequence " + str(self.premerge_left))
         logging.debug("Second pre-merge sequence " + str(self.premerge_right))
         logging.debug("Attempting a merge...")
@@ -92,32 +93,38 @@ class Mergesort():
         elif choice == self.premerge_right[0]:
             self.mergeresult.append(self.premerge_right.pop(0))
         logging.debug("Merge result list is "+str(self.mergeresult))
+        
         while self.premerge_left == [] or self.premerge_right == []:
             logging.debug("One of the pre-merge queues is empty, extending the merge result to include the other one")
             self.mergeresult.extend(self.premerge_left)
             self.mergeresult.extend(self.premerge_right)
             logging.debug("Merge result is now "+str(self.mergeresult))
-            i = self.counter * self.level
-            self.sequence[i:i+2*self.level] = self.mergeresult
+            self.sequence_out.append(self.mergeresult)
             self.mergeresult = []
-            logging.debug("Main sequence updated to "+str(self.sequence))
-            if i < len(self.sequence):
-                self.counter += 2
-                logging.debug("Counter incremented to "+str(self.counter))
-                self.premerge_left = self.sequence[self.counter*self.level:(self.counter+1)*self.level]
-                self.premerge_right = self.sequence[(self.counter+1)*self.level:(self.counter+2)*self.level]
-                logging.debug("Loaded new pre-merge sequences: "+str(self.premerge_left)+" and "+str(self.premerge_right))
-            if self.counter*self.level >= len(self.sequence) and self.level < len(self.sequence):
-                self.level *= 2
+            self.premerge_left = self.premerge_right = []
+            logging.debug("Out-sequence updated to "+str(self.sequence_out)+" and merge result sequence reset")
+
+            if len(self.sequence_in) == 1:
+                self.level += 1
                 logging.debug("Incrementing level, now set to "+str(self.level))
-                self.counter = 0
-                logging.debug("Counter reset to zero")
-                self.premerge_left = self.sequence[self.counter*self.level:(self.counter+1)*self.level]
-                self.premerge_right = self.sequence[(self.counter+1)*self.level:(self.counter+2)*self.level]
-                logging.debug("Loaded new pre-merge sequences: "+str(self.premerge_left)+" and "+str(self.premerge_right))
-            if self.level >= len(self.sequence):
-                logging.debug("The level counter is now greater or equal to sequence length, returning sorted sequence and exiting")
-                return self.sequence
+                logging.debug("One sequence left without a merge partner, appending it to the out-sequence")
+                self.sequence_out.append(self.sequence_in[0])
+                self.sequence_in = self.sequence_out
+                self.sequence_out = []
+            elif len(self.sequence_in) == 0:
+                self.level += 1
+                logging.debug("Incrementing level, now set to "+str(self.level))
+                self.sequence_in = self.sequence_out
+                self.sequence_out = []     
+                
+            if len(self.sequence_in) == 1 and not self.sequence_out:
+                logging.debug("The sort just completed")
+                return self.sequence_in[0]
+
+            self.premerge_left = self.sequence_in.pop(0)
+            self.premerge_right = self.sequence_in.pop(0)
+            logging.debug("Loaded new pre-merge sequences: "+str(self.premerge_left)+" and "+str(self.premerge_right))                
+            
 
 if __name__ == "__main__":
     import doctest
