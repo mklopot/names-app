@@ -75,7 +75,8 @@ class Mergesort():
         return int(math.floor(100 * self.progress / self.max_progress))
     
     def get_selections(self):
-        return (self.premerge_left[0], self.premerge_right[0])
+        if self.premerge_left and self.premerge_right:
+            return (self.premerge_left[0], self.premerge_right[0])
         
     def merge(self, choice):
         logging.debug("Called with choice="+str(choice))
