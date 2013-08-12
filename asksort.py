@@ -48,8 +48,7 @@ class Mergesort():
 
         >>> sorter.merge('Brie')
         >>> sorter.merge('Brie')
-        >>> sorter.merge('Munster')
-        >>> sorter.merge('Stilton')
+        >>> sorter.merge('Mozzarella')
         >>> sorter.merge('Brie')
         >>> sorter.merge('Mozzarella')
         ['Brie', 'Mozzarella', 'Munster']
@@ -105,21 +104,19 @@ class Mergesort():
             logging.debug("Out-sequence updated to "+str(self.sequence_out)+" and merge result sequence reset")
 
             if len(self.sequence_in) == 1:
-                self.level += 1
-                logging.debug("Incrementing level, now set to "+str(self.level))
-                logging.debug("One sequence left without a merge partner, appending it to the out-sequence")
-                self.sequence_out.append(self.sequence_in[0])
-                self.sequence_in = self.sequence_out
-                self.sequence_out = []
+                logging.debug("One sequence left without a merge partner, merging it with the last merge result")
+                self.premerge_left = self.sequence_in.pop()
+                self.premerge_right = self.sequence_out.pop()
+                continue
             elif len(self.sequence_in) == 0:
                 self.level += 1
                 logging.debug("Incrementing level, now set to "+str(self.level))
                 self.sequence_in = self.sequence_out
                 self.sequence_out = []     
                 
-            if len(self.sequence_in) == 1 and not self.sequence_out:
-                logging.debug("The sort just completed")
-                return self.sequence_in[0]
+                if len(self.sequence_in) == 1 and not self.sequence_out:
+                    logging.debug("The sort just completed")
+                    return self.sequence_in[0]
 
             self.premerge_left = self.sequence_in.pop(0)
             self.premerge_right = self.sequence_in.pop(0)
