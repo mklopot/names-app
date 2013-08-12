@@ -51,6 +51,7 @@ class Mergesort():
         >>> sorter.merge('Mozzarella')
         >>> sorter.merge('Brie')
         >>> sorter.merge('Mozzarella')
+        >>> sorter.merge('Munster')
         ['Brie', 'Mozzarella', 'Munster']
 
         Top three best cheeses are returned.
@@ -80,7 +81,8 @@ class Mergesort():
         
     def merge(self, choice):
         logging.debug("Called with choice="+str(choice))
-        #logging.debug("In/Out Sequences are ", repr(self.sequence_in), repr(self.sequence_out))
+        logging.debug("In-sequence "+str(self.sequence_in))
+        logging.debug("Out-sequence "+str(self.sequence_out))
         logging.debug("Level counter is "+str(self.level))
         if len(self.sequence_in) == 1 and not self.sequence_out and not self.premerge_left and not self.premerge_right and not self.mergeresult:
             logging.debug("Everything has already been sorted")
@@ -94,12 +96,21 @@ class Mergesort():
             self.mergeresult.append(self.premerge_right.pop(0))
         logging.debug("Merge result list is "+str(self.mergeresult))
         
+        if choice == False:
+            self.premerge_left = self.premerge_right = []
+            logging.debug("Flushing pre-merge queues")
+        
+        if len(self.mergeresult) >= self.top:
+            #self.sequence_out.append(self.mergeresult)
+            self.premerge_left = self.premerge_right = []
+                    
         while self.premerge_left == [] or self.premerge_right == []:
             logging.debug("One of the pre-merge queues is empty, extending the merge result to include the other one")
             self.mergeresult.extend(self.premerge_left)
             self.mergeresult.extend(self.premerge_right)
             logging.debug("Merge result is now "+str(self.mergeresult))
-            self.sequence_out.append(self.mergeresult)
+            if self.mergeresult != []:
+                self.sequence_out.append(self.mergeresult)
             self.mergeresult = []
             self.premerge_left = self.premerge_right = []
             logging.debug("Out-sequence updated to "+str(self.sequence_out)+" and merge result sequence reset")
